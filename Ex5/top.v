@@ -13,3 +13,27 @@
 //           heating, cooling
 //////////////////////////////////////////////////////////////////////////////////
 
+module aircond (clk, temperature, heating, cooling);
+input clk;
+input [4:0] temperature;
+output reg heating;
+output reg cooling;
+
+always @(posedge clk) 
+	begin
+	if ((temperature==5'd18)||(temperature<5'd18))
+		begin 
+		heating<=1'd1;
+		cooling<=1'd0;
+		end
+	else if (temperature>=5'd20)
+		heating<=1'd0;
+	if (temperature>=5'd22)
+		begin
+		cooling<=1'd1;
+		heating<=1'd0;
+		end
+	else if (temperature<=5'd20)
+		cooling<=1'd0;
+	end
+endmodule 
