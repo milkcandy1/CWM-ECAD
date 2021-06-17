@@ -44,11 +44,29 @@ parameter CLK_PERIOD = 10;
 			err=1;
 			end
 	
-	temperature = temperature+1'd1;
-	if (temperature
+		temperature = temperature+1'd1;
+		if (temperature>5'd30)
+		temperature=5'd5;
 
+		end
+	end
 
+	initial begin
+	#(500*CLK_PERIOD)
+	if (err==0)
+		$display ("***TEST PASSED!***");
+		$finish;
 
+	end
+
+	aircond aircond1 (
+	.temperature (temperature),
+	.clk (clk),
+	.heating (heating),
+	.cooling (cooling)
+	);
+
+endmodule
 
 
 
