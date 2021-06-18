@@ -7,3 +7,122 @@
 // You need to write the whole file
 //////////////////////////////////////////////////////////////////////////////////
 
+`timescale 1ns / 100ps
+
+module top_tb(
+    );
+    
+//Todo: Parameters
+	parameter CLK_PERIOD = 10;
+
+//Todo: Registers and wires
+	reg clk;
+	reg sel;
+	reg rst;
+	reg button;
+	reg err;
+	wire [23:0] light;
+	
+//Todo: Clock generation
+	initial
+	begin
+		clk = 1'b0;
+	forever
+		#(CLK_PERIOD/2) clk=~clk;
+	end
+
+//Todo: User logic
+	initial begin
+		sel=0;
+		err=0;
+		rst=1;
+		button=0;
+		#(CLK_PERIOD*2)
+		
+		if (light!=24'hFFFFFF)		//check if sel=0 white light
+			begin
+        $display("***TEST FAILED! Wrong colour!*** %h, %h, %h, %h error line 43", sel, rst, button, light);
+			err=1;
+			end
+		sel=1;
+		rst=1;	
+		#(CLK_PERIOD*2)			// if rst=1, colour={000}, rgb=light =24'b0 for sel=1
+		if ((rst==1) && (sel==1) && (light!=24'b0))
+			begin
+        $display("***TEST FAILED! Wrong colour!*** %h, %h, %h, %h error line 51", sel, rst, button, light);
+			err=1;
+			end
+		sel=1;
+		rst=0;
+		button=1;
+		#(CLK_PERIOD*3)
+			
+		forever begin
+		sel=1;
+		rst=0;
+		button=1;
+		#(CLK_PERIOD)
+		if (light!=24'h0000FF)
+			begin
+        $display("***TEST FAILED! Wrong colour!*** %h, %h, %h, %h error line 66", sel, rst, button, light);
+			err=1;
+			end
+			
+		#(CLK_PERIOD)
+		if (light!=24'h00FF00)
+			begin
+        $display("***TEST FAILED! Wrong colour!*** %h, %h, %h, %h error line 73", sel, rst, button, light);
+			err=1;
+			end
+		
+		#(CLK_PERIOD)
+		if (light!=24'h00FFFF)
+			begin
+        $display("***TEST FAILED! Wrong colour!*** %h, %h, %h, %h error line 80", sel, rst, button, light);
+			err=1;
+			end
+		
+		#(CLK_PERIOD)
+		if (light!=24'hFF0000)
+			begin
+        $display("***TEST FAILED! Wrong colour!*** %h, %h, %h, %h error line 87", sel, rst, button, light);
+			err=1;
+			end
+		
+		#(CLK_PERIOD)
+		if (light!=24'hFF00FF)
+			begin
+        $display("***TEST FAILED! Wrong right colour!*** %h, %h, %h, %h error line 94", sel, rst, button, light);
+			err=1;
+			end
+			
+		#(CLK_PERIOD)
+		if (light!=24'hFFFF00)
+			begin
+        $display("***TEST FAILED! Wrong right colour!*** %h, %h, %h, %h error line 101", sel, rst, button, light);
+			err=1;
+			end
+		
+			
+		end
+	end
+
+
+//Todo: Finish test, check for success
+	initial begin
+	#(500*CLK_PERIOD)
+        if (err==0)
+          $display("***TEST PASSED!***");
+        $finish;
+      end
+      
+//Todo: Instantiate counter module
+	selector selector1 ( 
+	.clk (clk),
+	.sel (sel),
+	.rst (rst),
+	.button (button),
+	.light (light)
+	);
+ 
+endmodule 
