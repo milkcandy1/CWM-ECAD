@@ -15,3 +15,41 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
+`timescale 1ns / 100ps
+
+
+module selector (
+    //Todo: add ports 
+	input clk,
+	input sel,
+	input rst,
+	input button,
+	output [23:0] light
+	);
+	
+wire [2:0] colour;
+wire [23:0] rgb;
+
+lights lights1 (
+	.rst(rst), 
+	.clk (clk), 
+	.button (button), 
+	.colour (colour)
+	);
+
+converter converter1 ( 
+	.clk (clk),
+	.enable (!rst),
+	.colour (colour),
+	.rgb (rgb)
+	);
+
+doorbell doorbell1 (
+	.a (24'hFFFFFF),
+	.b (rgb),
+	.sel (sel),
+	.out (light)
+	);
+     
+
+endmodule
